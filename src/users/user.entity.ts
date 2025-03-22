@@ -1,4 +1,4 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UserRole, UserStatus } from "./helpers/create-user-dto";
 import * as bcrypt from 'bcrypt';
 import { Post } from "src/posts/post.entity";
@@ -32,6 +32,19 @@ export class User extends BaseEntity {
 
     @Column({ select: false })
     salt: string;
+
+    @ManyToMany(() => User, user => user.following, { onDelete: "CASCADE" })
+    @JoinTable()
+    followers: User[];
+
+    @ManyToMany(() => User, user => user.followers, { onDelete: "CASCADE" })
+    following: User[];
+
+    @Column({ nullable: true })
+    numOfFollowers: number;
+
+    @Column({ nullable: true })
+    numOfFollowing: number;
 
     @OneToMany(() => Post, post => post.user, { onDelete: "CASCADE" })
     @JoinColumn()

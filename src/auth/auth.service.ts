@@ -65,6 +65,8 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
         user.phone = phone;
         user.password = await this.hashPassword(password, salt);
         user.salt = salt;
+        user.numOfFollowers = 0;
+        user.numOfFollowing = 0;
         if (Object.values(UserRole).includes(role)) {
             user.role = role;
         }

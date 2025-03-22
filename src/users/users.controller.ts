@@ -2,6 +2,7 @@ import { Controller, Delete, Get, Param, ParseIntPipe, Post, UseGuards } from '@
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 import AdminRoleGuard from 'src/helpers/guards/admin.roles.guard';
+import { GetUser } from 'src/helpers/decorators/get-user.decorator';
 
 @UseGuards(AuthGuard('jwt'), AdminRoleGuard())
 @Controller('users')
@@ -11,6 +12,12 @@ export class UsersController {
     @Get('')
     getUsers() {
         return this.usersService.getUsers();
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Post('/follow/:userId')
+    followUser(@GetUser() user, @Param('userId', ParseIntPipe) userId: number) {
+        return this.usersService.followUser(user, userId);
     }
 
     @Delete('/:id')
