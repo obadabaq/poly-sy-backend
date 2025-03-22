@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/helpers/create-user-dto';
-import { SignInUserDto } from 'src/users/helpers/login-user-dto';
+import { LogInUserDto } from 'src/users/helpers/login-user-dto';
+import { LogInAdminDto } from 'src/admins/helpers/login-admin-dto';
 
 @Controller('auth')
 export class AuthController {
@@ -13,7 +14,12 @@ export class AuthController {
     }
 
     @Post('/user/login')
-    userLogin(@Body() signInUserDto: SignInUserDto) {
-        return this.authService.userLogin(signInUserDto);
+    userLogin(@Body() logInUserDto: LogInUserDto) {
+        return this.authService.userLogin(logInUserDto);
+    }
+
+    @Post('/admin/login')
+    adminLogin(@Body() logInAdminDto: LogInAdminDto) {
+        return this.authService.adminLogin(logInAdminDto);
     }
 }

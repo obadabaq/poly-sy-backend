@@ -1,14 +1,14 @@
 import { Repository } from "typeorm";
 import { User } from "./user.entity";
 import { CustomRepository } from "src/helpers/database/typeorm-ex.decorator";
-import { SignInUserDto } from "./helpers/login-user-dto";
+import { LogInUserDto } from "./helpers/login-user-dto";
 
 @CustomRepository(User)
 export class UserRepository extends Repository<User> {
 
-    async validatePassword(signInUserDto: SignInUserDto): Promise<any> {
+    async validatePassword(logInUserDto: LogInUserDto): Promise<any> {
 
-        const { phone, password } = signInUserDto;
+        const { phone, password } = logInUserDto;
 
         const user = await this.createQueryBuilder('User')
             .addSelect('User.password')

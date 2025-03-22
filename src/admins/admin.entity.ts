@@ -1,9 +1,8 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { UserRole, UserStatus } from "./helpers/create-user-dto";
 import * as bcrypt from 'bcrypt';
 
 @Entity()
-export class User extends BaseEntity {
+export class Admin extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -17,13 +16,7 @@ export class User extends BaseEntity {
     accessToken: string;
 
     @Column({ unique: true })
-    phone: string;
-
-    @Column()
-    role: UserRole;
-
-    @Column()
-    status: UserStatus;
+    username: string;
 
     @Column({ select: false })
     password: string;

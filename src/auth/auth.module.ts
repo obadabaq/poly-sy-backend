@@ -5,10 +5,11 @@ import { TypeOrmExModule } from 'src/helpers/database/typeorm-ex.module';
 import { UserRepository } from 'src/users/user.repository';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { AdminRepository } from 'src/admins/admin.repository';
 
 @Module({
   imports: [
-    TypeOrmExModule.forCustomRepository([UserRepository]),
+    TypeOrmExModule.forCustomRepository([UserRepository, AdminRepository]),
     PassportModule.register({
       defaultStrategy: 'jwt'
     }),

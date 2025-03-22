@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, InternalServerErrorException, OnApplicationBootstrap, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,13 +8,19 @@ import * as bcrypt from 'bcrypt';
 import { UserJwtPayload } from 'src/users/helpers/user-jwt-payload.interface';
 import { User } from 'src/users/user.entity';
 import { CreateUserDto, UserRole, UserStatus } from 'src/users/helpers/create-user-dto';
-import { SignInUserDto } from 'src/users/helpers/login-user-dto';
+import { LogInUserDto } from 'src/users/helpers/login-user-dto';
+import { LogInAdminDto } from 'src/admins/helpers/login-admin-dto';
+import { AdminRepository } from 'src/admins/admin.repository';
+import { AdminJwtPayload } from 'src/admins/helpers/admin-jwt-payload.interface';
+import { Admin } from 'src/admins/admin.entity';
 
 @Injectable()
-export class AuthService extends PassportStrategy(Strategy) {
+export class AuthService extends PassportStrategy(Strategy) implements OnApplicationBootstrap {
     constructor(
         @InjectRepository(UserRepository)
         private userRepository: UserRepository,
+        @InjectRepository(AdminRepository)
+        private adminRepository: AdminRepository,
         private jwtService: JwtService,
 
     ) {
@@ -24,6 +30,20 @@ export class AuthService extends PassportStrategy(Strategy) {
         });
     }
 
+
+    async onApplicationBootstrap() {
+        await this.createAdminIfNotExists();
+    }
+
+    async validate(payload: any): Promise<any> {
+        const { username } = payload;
+        const admin = await this.adminRepository.findOne({ where: { username: username } });
+
+        if (!admin) {
+            throw new UnauthorizedException();
+        }
+        return admin;
+    }
 
     async addUser(createUserDto: CreateUserDto): Promise<any> {
         const { phone, password, role } = createUserDto;
@@ -63,10 +83,10 @@ export class AuthService extends PassportStrategy(Strategy) {
         return userWithoutSensitiveData;
     }
 
-    async userLogin(signInUserDto: SignInUserDto) {
-        let { phone } = signInUserDto;
+    async userLogin(logInUserDto: LogInUserDto) {
+        let { phone } = logInUserDto;
 
-        let user = await this.userRepository.validatePassword(signInUserDto);
+        let user = await this.userRepository.validatePassword(logInUserDto);
 
         if (!user) {
             throw new UnauthorizedException('Invalid credentials');
@@ -84,6 +104,69 @@ export class AuthService extends PassportStrategy(Strategy) {
         return updatedUser;
     }
 
+    async createAdminIfNotExists(): Promise<any> {
+        const username = process.env.ADMIN_USERNAME
+        const password = process.env.ADMIN_PASSWORD;
+
+        const adminExists = await this.adminRepository.findOne({
+            where: { username: username },
+        });
+
+        if (!adminExists && username && password) {
+            const salt = await bcrypt.genSalt();
+
+            const admin = new Admin();
+            admin.username = username;
+            admin.password = await this.hashPassword(password, salt);
+            admin.salt = salt;
+            const accessToken = await this.userToken(username);
+            admin.accessToken = accessToken;
+
+            try {
+                await this.adminRepository.save(admin);
+            } catch (e) {
+                if (e.code === '23505') {
+                    throw new ConflictException("Phone already exists");
+                }
+                throw new InternalServerErrorException("Error code:" + e.code);
+            }
+        }
+    }
+
+    async adminLogin(logInAdminDto: LogInAdminDto) {
+        let { username } = logInAdminDto;
+
+        let admin = await this.adminRepository.validatePassword(logInAdminDto);
+
+        if (!admin) {
+            throw new UnauthorizedException('Invalid credentials');
+        }
+
+        const accessToken = await this.adminToken(username);
+        admin.accessToken = accessToken;
+
+        const updatedAdmin = await this.adminRepository.save(admin);
+        console.log(updatedAdmin);
+
+
+        delete updatedAdmin.password;
+        delete updatedAdmin.salt;
+
+        return updatedAdmin;
+    }
+
+    async userToken(phone: string): Promise<string> {
+        let payload: UserJwtPayload = { phone } as UserJwtPayload;
+        const accessToken = await this.jwtService.sign(payload);
+        return accessToken;
+    }
+
+    async adminToken(username: string): Promise<string> {
+        let payload: AdminJwtPayload = { username } as AdminJwtPayload;
+        const accessToken = await this.jwtService.sign(payload);
+        return accessToken;
+    }
+
     async validateUser(payload: UserJwtPayload): Promise<User> {
 
         const { phone } = payload;
@@ -99,12 +182,6 @@ export class AuthService extends PassportStrategy(Strategy) {
     async validateUserToken(token: string) {
         let customer = this.jwtService.decode(token);
         return customer['phone'];
-    }
-
-    async userToken(phone: string): Promise<string> {
-        let payload: UserJwtPayload = { phone, } as UserJwtPayload;
-        const accessToken = await this.jwtService.sign(payload);
-        return accessToken;
     }
 
     private async hashPassword(password: string, salt: string) {
