@@ -30,7 +30,7 @@ export class UsersService {
 
         if (!found) throw new NotFoundException(`User with ID: ${userId} not found`);
         if (found.role != UserRole.ACTOR) throw new ForbiddenException(`You can only follow Actor user`);
-        // if (found.status != UserStatus.VERIFIED) throw new ForbiddenException(`This user is not verified`);
+        if (found.status != UserStatus.VERIFIED) throw new ForbiddenException(`This user is not verified`);
 
         ///if followed remove follow and return
         for (let i = 0; i < found.followers.length; i++) {
@@ -50,6 +50,21 @@ export class UsersService {
         user.numOfFollowing += 1;
         await this.userRepository.save(found);
         await this.userRepository.save(user);
+
+        return found;
+    }
+
+    async verifyUser(userId: number) {
+        let query = this.userRepository.createQueryBuilder('User')
+            .where("User.id = :id", { id: userId });
+        let found = await query.getOne();
+
+        if (!found) throw new NotFoundException(`User with ID: ${userId} not found`);
+        if (found.role != UserRole.ACTOR) throw new ForbiddenException(`You can verify Actor users`);
+        if (found.status == UserStatus.VERIFIED) throw new ForbiddenException(`This user is verified`);
+
+        found.status = UserStatus.VERIFIED;
+        await this.userRepository.save(found);
 
         return found;
     }

@@ -20,6 +20,11 @@ export class UsersController {
         return this.usersService.followUser(user, userId);
     }
 
+    @Post('/verify/:userId')
+    verifyUser(@Param('userId', ParseIntPipe) userId: number) {
+        return this.usersService.verifyUser(userId);
+    }
+
     @Delete('/:id')
     deleteUser(@Param('id', ParseIntPipe) id: number) {
         return this.usersService.deleteUser(id);
