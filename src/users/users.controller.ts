@@ -1,7 +1,7 @@
-import { Controller, Delete, Get, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
-import AdminRoleGuard from 'src/admins/helpers/admin.roles.guard';
+import AdminRoleGuard from 'src/helpers/guards/admin.roles.guard';
 
 @UseGuards(AuthGuard('jwt'), AdminRoleGuard())
 @Controller('users')

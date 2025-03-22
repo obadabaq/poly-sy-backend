@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, ForbiddenException, mixin, Type } from '@nestjs/common';
-import { Admin } from '../admin.entity';
+import { Admin } from '../../admins/admin.entity';
 
 const AdminRoleGuard = (): Type<CanActivate> => {
   class RoleGuardMixin implements CanActivate {

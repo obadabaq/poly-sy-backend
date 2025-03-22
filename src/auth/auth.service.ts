@@ -36,13 +36,24 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
     }
 
     async validate(payload: any): Promise<any> {
-        const { username } = payload;
-        const admin = await this.adminRepository.findOne({ where: { username: username } });
+        if (payload.username) {
+            const { username } = payload;
+            const admin = await this.adminRepository.findOne({ where: { username: username } });
 
-        if (!admin) {
-            throw new UnauthorizedException();
+            if (!admin) {
+                throw new UnauthorizedException();
+            }
+            return admin;
         }
-        return admin;
+        else {
+            const { phone } = payload;
+            const user = await this.userRepository.findOne({ where: { phone: phone } });
+
+            if (!user) {
+                throw new UnauthorizedException();
+            }
+            return user;
+        }
     }
 
     async addUser(createUserDto: CreateUserDto): Promise<any> {
@@ -146,7 +157,6 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
         admin.accessToken = accessToken;
 
         const updatedAdmin = await this.adminRepository.save(admin);
-        console.log(updatedAdmin);
 
 
         delete updatedAdmin.password;

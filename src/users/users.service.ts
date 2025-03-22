@@ -10,7 +10,8 @@ export class UsersService {
     ) { }
 
     async getUsers() {
-        let query = this.userRepository.createQueryBuilder('User');
+        let query = this.userRepository.createQueryBuilder('User')
+            .leftJoinAndSelect("User.posts", "posts");
         let found = await query.getMany();
 
         return found;

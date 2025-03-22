@@ -12,7 +12,7 @@ export class Admin extends BaseEntity {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @Column()
+    @Column({ select: false })
     accessToken: string;
 
     @Column({ unique: true })

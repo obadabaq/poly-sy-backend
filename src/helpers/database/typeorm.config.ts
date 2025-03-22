@@ -1,5 +1,6 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { Admin } from "src/admins/admin.entity";
+import { Post } from "src/posts/post.entity";
 import { User } from "src/users/user.entity";
 
 export const typeOrmConfig: TypeOrmModuleOptions = {
@@ -10,6 +11,6 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
     username: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASS,
     database: "polysy",
-    entities: [User, Admin],
+    entities: [User, Admin, Post],
     synchronize: true
 }
