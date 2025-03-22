@@ -61,6 +61,7 @@ export class PostsService {
             if (found.likedByUsers[i].id == user.id) {
                 let index = found.likedByUsers.indexOf(user);
                 found.likedByUsers.splice(index);
+                found.numOfLikes -= 1;
                 await this.postRepository.save(found);
                 return found
             }
@@ -71,10 +72,12 @@ export class PostsService {
             if (found.dislikedByUsers[i].id == user.id) {
                 let index = found.dislikedByUsers.indexOf(user);
                 found.dislikedByUsers.splice(index);
+                found.numOfDislikes -= 1;
             }
         }
         ///add to liked
         found.likedByUsers.push(user);
+        found.numOfLikes += 1;
         await this.postRepository.save(found);
         return found
     }
@@ -92,6 +95,7 @@ export class PostsService {
             if (found.dislikedByUsers[i].id == user.id) {
                 let index = found.dislikedByUsers.indexOf(user);
                 found.dislikedByUsers.splice(index);
+                found.numOfDislikes -= 1;
                 await this.postRepository.save(found);
                 return found
             }
@@ -102,10 +106,12 @@ export class PostsService {
             if (found.likedByUsers[i].id == user.id) {
                 let index = found.likedByUsers.indexOf(user);
                 found.likedByUsers.splice(index);
+                found.numOfLikes -= 1;
             }
         }
         ///add to disliked
         found.dislikedByUsers.push(user);
+        found.numOfDislikes += 1;
         await this.postRepository.save(found);
         return found
     }

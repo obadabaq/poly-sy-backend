@@ -18,6 +18,12 @@ export class Post extends BaseEntity {
     @ManyToOne(() => User, user => user.posts)
     user: User;
 
+    @Column()
+    numOfLikes: number;
+
+    @Column()
+    numOfDislikes: number;
+
     @ManyToMany(() => User, user => user.likes, { eager: true, onDelete: "CASCADE" })
     @JoinTable()
     likedByUsers: User[]
