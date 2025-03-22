@@ -58,9 +58,9 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
             user.role = role;
         }
         else {
-            throw new ForbiddenException('User role should be VOTER or REPRESENTATIVE');
+            throw new ForbiddenException('User role should be VOTER or ACTOR');
         }
-        if (user.role == UserRole.REPRESENTATIVE) {
+        if (user.role == UserRole.ACTOR) {
             user.status = UserStatus.WAITING_FOR_APPROVAL
         }
         else {
