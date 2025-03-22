@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostRepository } from './post.repository';
 import { User } from 'src/users/user.entity';
-import { CreatePostDto } from './helers/create-post-dto';
+import { CreatePostDto } from './helpers/create-post-dto';
 import { UserRole, UserStatus } from 'src/users/helpers/create-user-dto';
 
 @Injectable()
@@ -16,7 +16,8 @@ export class PostsService {
         let query = this.postRepository.createQueryBuilder('Post')
             .leftJoinAndSelect("Post.user", "user")
             .leftJoinAndSelect("Post.likedByUsers", "likedByUsers")
-            .leftJoinAndSelect("Post.dislikedByUsers", "dislikedByUsers");
+            .leftJoinAndSelect("Post.dislikedByUsers", "dislikedByUsers")
+            .leftJoinAndSelect("Post.comments", "comments");
         let found = await query.getMany();
 
         return found;

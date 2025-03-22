@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, UseGuards } f
 import { PostsService } from './posts.service';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/helpers/decorators/get-user.decorator';
-import { CreatePostDto } from './helers/create-post-dto';
+import { CreatePostDto } from './helpers/create-post-dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('posts')

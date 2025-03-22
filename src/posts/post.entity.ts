@@ -1,5 +1,6 @@
 import { User } from "src/users/user.entity";
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Comment } from "src/comments/comment.entity";
 
 @Entity()
 export class Post extends BaseEntity {
@@ -31,4 +32,8 @@ export class Post extends BaseEntity {
     @ManyToMany(() => User, user => user.dislikes, { eager: true, onDelete: "CASCADE" })
     @JoinTable()
     dislikedByUsers: User[]
+
+    @OneToMany(() => Comment, comment => comment.post, { onDelete: "CASCADE" })
+    @JoinColumn()
+    comments: Comment[];
 }

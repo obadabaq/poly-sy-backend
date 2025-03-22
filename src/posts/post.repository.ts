@@ -1,7 +1,7 @@
 import { Repository } from "typeorm";
 import { CustomRepository } from "src/helpers/database/typeorm-ex.decorator";
 import { Post } from "./post.entity";
-import { CreatePostDto } from "./helers/create-post-dto";
+import { CreatePostDto } from "./helpers/create-post-dto";
 import { User } from "src/users/user.entity";
 import { InternalServerErrorException } from "@nestjs/common";
 

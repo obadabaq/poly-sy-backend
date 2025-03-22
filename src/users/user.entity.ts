@@ -2,6 +2,7 @@ import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToMany, O
 import { UserRole, UserStatus } from "./helpers/create-user-dto";
 import * as bcrypt from 'bcrypt';
 import { Post } from "src/posts/post.entity";
+import { Comment } from "src/comments/comment.entity";
 
 @Entity()
 export class User extends BaseEntity {
@@ -41,6 +42,16 @@ export class User extends BaseEntity {
 
     @ManyToMany(() => Post, post => post.dislikedByUsers, { onDelete: "CASCADE" })
     dislikes: Post[];
+
+    @OneToMany(() => Comment, comment => comment.user, { onDelete: "CASCADE" })
+    @JoinColumn()
+    comments: Comment[];
+
+    @ManyToMany(() => Comment, comment => comment.likedByUsers, { onDelete: "CASCADE" })
+    commentsLiked: Comment[];
+
+    @ManyToMany(() => Comment, comment => comment.dislikedByUsers, { onDelete: "CASCADE" })
+    commentsDisliked: Comment[];
 
     async validatePassword(password: string): Promise<boolean> {
         const hash = await bcrypt.hash(password, this.salt);
