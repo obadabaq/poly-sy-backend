@@ -57,7 +57,7 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
     }
 
     async addUser(createUserDto: CreateUserDto): Promise<any> {
-        const { phone, password, role } = createUserDto;
+        const { phone, password, role, idVerification } = createUserDto;
 
         const salt = await bcrypt.genSalt();
 
@@ -67,12 +67,10 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
         user.salt = salt;
         user.numOfFollowers = 0;
         user.numOfFollowing = 0;
-        if (Object.values(UserRole).includes(role)) {
-            user.role = role;
-        }
-        else {
+        if (!Object.values(UserRole).includes(role)) {
             throw new ForbiddenException('User role should be VOTER or REPRESENTATIVE');
         }
+        user.role = role;
         if (user.role == UserRole.REPRESENTATIVE) {
             user.status = UserStatus.WAITING_FOR_APPROVAL
         }
@@ -81,6 +79,7 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
         }
         const accessToken = await this.userToken(phone);
         user.accessToken = accessToken;
+        if (idVerification !== undefined && idVerification !== null) user.idVerification = idVerification;
 
         try {
             await this.userRepository.save(user);

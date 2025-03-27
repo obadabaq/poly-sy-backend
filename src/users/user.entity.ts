@@ -27,6 +27,9 @@ export class User extends BaseEntity {
     @Column()
     status: UserStatus;
 
+    @Column({ nullable: true })
+    idVerification: string;
+
     @Column({ select: false })
     password: string;
 
