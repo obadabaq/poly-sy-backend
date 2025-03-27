@@ -30,10 +30,10 @@ export class PostsService {
         return await this.postRepository.addPost(createPostDto, user);
     }
 
-    async getActorsWall() {
+    async getRepresentativesWall() {
         let query = this.postRepository.createQueryBuilder('Post')
             .leftJoinAndSelect("Post.user", "user")
-            .where("user.role = :role", { role: UserRole.ACTOR });
+            .where("user.role = :role", { role: UserRole.REPRESENTATIVE });
         let found = await query.getMany();
 
         return found;

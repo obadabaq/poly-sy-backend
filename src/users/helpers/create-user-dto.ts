@@ -7,7 +7,7 @@ export class CreateUserDto {
 
 export enum UserRole {
     VOTER = 'VOTER',
-    ACTOR = 'ACTOR'
+    REPRESENTATIVE = 'REPRESENTATIVE'
 }
 
 export enum UserStatus {

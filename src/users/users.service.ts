@@ -29,7 +29,7 @@ export class UsersService {
         let found = await query.getOne();
 
         if (!found) throw new NotFoundException(`User with ID: ${userId} not found`);
-        if (found.role != UserRole.ACTOR) throw new ForbiddenException(`You can only follow Actor user`);
+        if (found.role != UserRole.REPRESENTATIVE) throw new ForbiddenException(`You can only follow Representative user`);
         if (found.status != UserStatus.VERIFIED) throw new ForbiddenException(`This user is not verified`);
 
         ///if followed remove follow and return
@@ -60,7 +60,7 @@ export class UsersService {
         let found = await query.getOne();
 
         if (!found) throw new NotFoundException(`User with ID: ${userId} not found`);
-        if (found.role != UserRole.ACTOR) throw new ForbiddenException(`You can verify Actor users`);
+        if (found.role != UserRole.REPRESENTATIVE) throw new ForbiddenException(`You can verify Representative users`);
         if (found.status == UserStatus.VERIFIED) throw new ForbiddenException(`This user is verified`);
 
         found.status = UserStatus.VERIFIED;

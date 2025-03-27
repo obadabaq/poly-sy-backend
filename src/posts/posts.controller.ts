@@ -19,9 +19,9 @@ export class PostsController {
         return this.postsService.addPost(user, createPostDto);
     }
 
-    @Get('/getActorsWall')
-    getActorsWall() {
-        return this.postsService.getActorsWall();
+    @Get('/getRepresentativesWall')
+    getRepresentativesWall() {
+        return this.postsService.getRepresentativesWall();
     }
 
     @Get('/getVotersWall')
