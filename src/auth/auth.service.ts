@@ -57,7 +57,7 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
     }
 
     async addUser(createUserDto: CreateUserDto): Promise<any> {
-        const { phone, password, role, idVerification } = createUserDto;
+        const { phone, password, role, lat, long, idVerification } = createUserDto;
 
         const salt = await bcrypt.genSalt();
 
@@ -77,10 +77,11 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
         else {
             user.status = UserStatus.VERIFIED
         }
+        user.lat = lat;
+        user.long = long;
         const accessToken = await this.userToken(phone);
         user.accessToken = accessToken;
         if (idVerification !== undefined && idVerification !== null) user.idVerification = idVerification;
-
         try {
             await this.userRepository.save(user);
         } catch (e) {

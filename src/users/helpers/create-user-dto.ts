@@ -2,6 +2,8 @@ export class CreateUserDto {
     phone: string;
     password: string;
     role: UserRole;
+    lat: string;
+    long: string;
     idVerification: string;
 }
 

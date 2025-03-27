@@ -28,6 +28,12 @@ export class User extends BaseEntity {
     status: UserStatus;
 
     @Column({ nullable: true })
+    lat: string;
+
+    @Column({ nullable: true })
+    long: string;
+
+    @Column({ nullable: true })
     idVerification: string;
 
     @Column({ select: false })
