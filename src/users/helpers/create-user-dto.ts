@@ -1,5 +1,6 @@
 export class CreateUserDto {
     phone: string;
+    name: string;
     password: string;
     role: UserRole;
     lat: string;

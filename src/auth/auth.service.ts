@@ -57,12 +57,13 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
     }
 
     async addUser(createUserDto: CreateUserDto): Promise<any> {
-        const { phone, password, role, lat, long, idVerification } = createUserDto;
+        const { phone, name, password, role, lat, long, idVerification } = createUserDto;
 
         const salt = await bcrypt.genSalt();
 
         const user = new User();
         user.phone = phone;
+        user.name = name;
         user.password = await this.hashPassword(password, salt);
         user.salt = salt;
         user.numOfFollowers = 0;
