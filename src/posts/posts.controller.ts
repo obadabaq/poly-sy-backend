@@ -19,14 +19,14 @@ export class PostsController {
         return this.postsService.addPost(user, createPostDto);
     }
 
-    @Get('/getRepresentativesWall')
-    getRepresentativesWall() {
-        return this.postsService.getRepresentativesWall();
+    @Get('/getCouncil')
+    getCouncil() {
+        return this.postsService.getCouncil();
     }
 
-    @Get('/getVotersWall')
-    getVotersWall() {
-        return this.postsService.getVotersWall();
+    @Get('/getStreet')
+    getStreet() {
+        return this.postsService.getStreet();
     }
 
     @Post('/like/:id')

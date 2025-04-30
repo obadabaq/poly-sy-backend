@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostRepository } from './post.repository';
 import { User } from 'src/users/user.entity';
-import { CreatePostDto } from './helpers/create-post-dto';
+import { CreatePostDto, WallType } from './helpers/create-post-dto';
 import { UserRole, UserStatus } from 'src/users/helpers/create-user-dto';
 
 @Injectable()
@@ -30,19 +30,19 @@ export class PostsService {
         return await this.postRepository.addPost(createPostDto, user);
     }
 
-    async getRepresentativesWall() {
+    async getCouncil() {
         let query = this.postRepository.createQueryBuilder('Post')
             .leftJoinAndSelect("Post.user", "user")
-            .where("user.role = :role", { role: UserRole.REPRESENTATIVE });
+            .where("Post.wallType = :wallType", { wallType: WallType.COUNCIL });
         let found = await query.getMany();
 
         return found;
     }
 
-    async getVotersWall() {
+    async getStreet() {
         let query = this.postRepository.createQueryBuilder('Post')
             .leftJoinAndSelect("Post.user", "user")
-            .where("user.role = :role", { role: UserRole.VOTER });
+            .where("Post.wallType = :wallType", { wallType: WallType.STREET });
         let found = await query.getMany();
 
         return found;
