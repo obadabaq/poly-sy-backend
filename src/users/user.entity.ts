@@ -1,4 +1,4 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UserRole, UserStatus } from "./helpers/create-user-dto";
 import * as bcrypt from 'bcrypt';
 import { Post } from "src/posts/post.entity";
@@ -31,10 +31,10 @@ export class User extends BaseEntity {
     status: UserStatus;
 
     @Column({ nullable: true })
-    lat: string;
+    city: string;
 
     @Column({ nullable: true })
-    long: string;
+    area: string;
 
     @Column({ nullable: true })
     idVerification: string;
@@ -77,6 +77,9 @@ export class User extends BaseEntity {
 
     @ManyToMany(() => Comment, comment => comment.dislikedByUsers, { onDelete: "CASCADE" })
     commentsDisliked: Comment[];
+
+    @DeleteDateColumn()
+    deletedAt?: Date;
 
     async validatePassword(password: string): Promise<boolean> {
         const hash = await bcrypt.hash(password, this.salt);

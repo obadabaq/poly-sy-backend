@@ -9,6 +9,7 @@ import { GetUser } from 'src/helpers/decorators/get-user.decorator';
 export class UsersController {
     constructor(private usersService: UsersService) { }
 
+    @UseGuards(AuthGuard('jwt'))
     @Get('')
     getUsers() {
         return this.usersService.getUsers();

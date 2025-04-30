@@ -33,6 +33,8 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
 
     async onApplicationBootstrap() {
         await this.createAdminIfNotExists();
+        ///generating random users for test only
+        await this.generateUsers();
     }
 
     async validate(payload: any): Promise<any> {
@@ -57,7 +59,7 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
     }
 
     async addUser(createUserDto: CreateUserDto): Promise<any> {
-        const { phone, name, password, role, lat, long, idVerification } = createUserDto;
+        const { phone, name, password, role, city, area, idVerification } = createUserDto;
 
         const salt = await bcrypt.genSalt();
 
@@ -78,8 +80,10 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
         else {
             user.status = UserStatus.VERIFIED
         }
-        user.lat = lat;
-        user.long = long;
+        user.city = city;
+        user.area = area;
+        // user.lat = lat;
+        // user.long = long;
         const accessToken = await this.userToken(phone);
         user.accessToken = accessToken;
         if (idVerification !== undefined && idVerification !== null) user.idVerification = idVerification;
@@ -201,4 +205,77 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
         return bcrypt.hash(password, salt);
     }
 
+
+    ///generating random users for test only
+    private async generateUsers() {
+        try {
+            if ((await this.userRepository.find()).length >= 5000) return;
+            await this.userRepository.softDelete({});
+
+            const data = require('../../uploads/maps/areas_boundaries.json');
+            const areaCity: AreaCity[] = data.map(item =>
+                new AreaCity(item.name, item.parent)
+            );
+
+            const phoneNumbers = this.generateUniquePhoneNumbers(5000);
+
+            const batchSize = 500;
+            const totalUsers = 5000;
+
+            for (let batchStart = 0; batchStart < totalUsers; batchStart += batchSize) {
+                const batchEnd = Math.min(batchStart + batchSize, totalUsers);
+                const batchPromises = [];
+
+                for (let i = batchStart; i < batchEnd; i++) {
+                    const randomIndex = Math.floor(Math.random() * areaCity.length);
+                    const { city, area } = areaCity[randomIndex];
+                    const role = i % 3 === 0 ? UserRole.REPRESENTATIVE : UserRole.VOTER;
+
+                    const userDto = new CreateUserDto(
+                        phoneNumbers[i],
+                        `test${i}`,
+                        `testpass${i}`,
+                        role,
+                        city,
+                        area
+                    );
+
+                    this.addUser(userDto);
+                }
+
+                await Promise.all(batchPromises);
+                console.log(`Created users ${batchStart} to ${batchEnd - 1}`);
+            }
+
+            console.log('Successfully generated all 5000 users');
+        } catch (error) {
+            console.error('Error in generateUsers:', error);
+            throw error;
+        }
+    }
+
+    private generateUniquePhoneNumbers(count: number): string[] {
+        const phones = new Set<string>();
+        const prefix = '963';
+
+        while (phones.size < count) {
+            const randomDigits = Math.floor(Math.random() * 900000000 + 100000000).toString();
+            const fullNumber = `${prefix}${randomDigits}`;
+            phones.add(fullNumber);
+
+            if (phones.size >= count) break;
+        }
+
+        return Array.from(phones);
+    }
+}
+
+class AreaCity {
+    area: string;
+    city: string;
+
+    constructor(area: string, city: string) {
+        this.area = area;
+        this.city = city;
+    }
 }
