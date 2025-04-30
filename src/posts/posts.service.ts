@@ -117,20 +117,36 @@ export class PostsService {
         return found
     }
 
-    async deletePost(user: User, id: number) {
+    async deletePost(user: any, id: number) {
         const found = await this.postRepository.findOne({ where: { id: id }, relations: ['user'] });
         if (!found) throw new NotFoundException(`Post with ID ${id} not found`);
-        if (found.user.id != user.id) throw new ForbiddenException(`This post is not for this user`);
+        if (user instanceof User) {
+            if (found.user.id != user.id) throw new ForbiddenException(`This post is not for this user`);
+            let deleted;
+            try {
+                deleted = await this.postRepository.createQueryBuilder()
+                    .delete()
+                    .where("id = :id", { id: found.id })
+                    .execute();
 
-        let deleted;
-        try {
-            deleted = await this.postRepository.createQueryBuilder()
-                .delete()
-                .where("id = :id", { id: found.id })
-                .execute();
-
+            }
+            catch (e) { }
+            return deleted ? true : false;
         }
-        catch (e) { }
-        return deleted ? true : false;
+        else {
+            let deleted;
+            try {
+                deleted = await this.postRepository.createQueryBuilder()
+                    .delete()
+                    .where("id = :id", { id: found.id })
+                    .execute();
+
+            }
+            catch (e) { }
+            return deleted ? true : false;
+        }
+
+
+
     }
 }

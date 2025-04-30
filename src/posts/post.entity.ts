@@ -1,6 +1,7 @@
 import { User } from "src/users/user.entity";
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Comment } from "src/comments/comment.entity";
+import { WallType } from "./helpers/create-post-dto";
 
 @Entity()
 export class Post extends BaseEntity {
@@ -24,6 +25,9 @@ export class Post extends BaseEntity {
 
     @Column()
     numOfDislikes: number;
+
+    @Column()
+    wallType: WallType;
 
     @ManyToMany(() => User, user => user.likes, { eager: true, onDelete: "CASCADE" })
     @JoinTable()
