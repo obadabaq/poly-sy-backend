@@ -23,12 +23,16 @@ export class PostsService {
         return found;
     }
 
-    async getPostComments(postId: number) {
+    async getPostComments(user: User, postId: number) {
         const comments = await this.postRepository
             .createQueryBuilder('post')
             .innerJoinAndSelect('post.comments', 'comments')
             .leftJoinAndSelect('comments.user', 'user')
+            .leftJoin('comments.likedByUsers', 'likedByUser', 'likedByUser.id = :userId', { userId: user.id })
+            .leftJoin('comments.dislikedByUsers', 'dislikedByUser', 'dislikedByUser.id = :userId', { userId: user.id })
             .where('post.id = :postId', { postId })
+            .addSelect('CASE WHEN likedByUser.id IS NOT NULL THEN true ELSE false END', 'hasLiked')
+            .addSelect('CASE WHEN dislikedByUser.id IS NOT NULL THEN true ELSE false END', 'hasDisliked')
             .getRawMany();
 
         return comments.map(comment => ({
@@ -38,6 +42,8 @@ export class PostsService {
             updatedAt: comment.comments_updatedAt,
             numOfLikes: comment.comments_numOfLikes,
             numOfDislikes: comment.comments_numOfDislikes,
+            hasLiked: comment.hasLiked,
+            hasDisliked: comment.hasDisliked,
             user: {
                 id: comment.user_id,
                 name: comment.user_name,

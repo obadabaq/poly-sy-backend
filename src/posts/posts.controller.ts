@@ -15,8 +15,8 @@ export class PostsController {
     }
 
     @Get('/:postId/comments')
-    getPostComments(@Param('postId', ParseIntPipe) postId: number) {
-        return this.postsService.getPostComments(postId);
+    getPostComments(@GetUser() user, @Param('postId', ParseIntPipe) postId: number) {
+        return this.postsService.getPostComments(user, postId);
     }
 
     @Post('')
