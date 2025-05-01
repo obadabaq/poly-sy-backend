@@ -14,6 +14,11 @@ export class PostsController {
         return this.postsService.getPosts();
     }
 
+    @Get('/:postId/comments')
+    getPostComments(@Param('postId', ParseIntPipe) postId: number) {
+        return this.postsService.getPostComments(postId);
+    }
+
     @Post('')
     addPost(@GetUser() user, @Body() createPostDto: CreatePostDto) {
         return this.postsService.addPost(user, createPostDto);

@@ -23,6 +23,33 @@ export class PostsService {
         return found;
     }
 
+    async getPostComments(postId: number) {
+        const comments = await this.postRepository
+            .createQueryBuilder('post')
+            .innerJoinAndSelect('post.comments', 'comments')
+            .leftJoinAndSelect('comments.user', 'user')
+            .where('post.id = :postId', { postId })
+            .getRawMany();
+
+        return comments.map(comment => ({
+            id: comment.comments_id,
+            content: comment.comments_content,
+            createdAt: comment.comments_createdAt,
+            updatedAt: comment.comments_updatedAt,
+            numOfLikes: comment.comments_numOfLikes,
+            numOfDislikes: comment.comments_numOfDislikes,
+            user: {
+                id: comment.user_id,
+                name: comment.user_name,
+                role: comment.user_role,
+                city: comment.user_city,
+                area: comment.user_area,
+                numOfFollowers: comment.user_numOfFollowers,
+                numOfFollowing: comment.user_numOfFollowing,
+            }
+        }));
+    }
+
     async addPost(user: User, createPostDto: CreatePostDto) {
         if (user.status == UserStatus.WAITING_FOR_APPROVAL) {
             throw new ForbiddenException('User is not approved yet');
