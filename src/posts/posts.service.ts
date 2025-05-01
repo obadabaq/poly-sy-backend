@@ -57,22 +57,48 @@ export class PostsService {
         return await this.postRepository.addPost(createPostDto, user);
     }
 
-    async getCouncil() {
+    async getCouncil(user: User) {
+        const userId = user.id;
+
         let query = this.postRepository.createQueryBuilder('Post')
             .leftJoinAndSelect("Post.user", "user")
+            .leftJoinAndSelect("Post.likedByUsers", "likedByUsers")
+            .leftJoinAndSelect("Post.dislikedByUsers", "dislikedByUsers")
             .where("Post.wallType = :wallType", { wallType: WallType.COUNCIL });
+
         let found = await query.getMany();
 
-        return found;
+        return found.map(post => {
+            return {
+                ...post,
+                hasLiked: post.likedByUsers?.some(u => u.id === userId) || false,
+                hasDisliked: post.dislikedByUsers?.some(u => u.id === userId) || false,
+                likedByUsers: undefined,
+                dislikedByUsers: undefined
+            };
+        });
     }
 
-    async getStreet() {
+    async getStreet(user: User) {
+        const userId = user.id;
+
         let query = this.postRepository.createQueryBuilder('Post')
             .leftJoinAndSelect("Post.user", "user")
+            .leftJoinAndSelect("Post.likedByUsers", "likedByUsers")
+            .leftJoinAndSelect("Post.dislikedByUsers", "dislikedByUsers")
             .where("Post.wallType = :wallType", { wallType: WallType.STREET });
+
         let found = await query.getMany();
 
-        return found;
+        return found.map(post => {
+            return {
+                ...post,
+                hasLiked: post.likedByUsers?.some(u => u.id === userId) || false,
+                hasDisliked: post.dislikedByUsers?.some(u => u.id === userId) || false,
+                likedByUsers: undefined,
+                dislikedByUsers: undefined
+            };
+        });
     }
 
     async likePost(user: User, postId: number) {

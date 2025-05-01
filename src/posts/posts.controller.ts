@@ -25,13 +25,13 @@ export class PostsController {
     }
 
     @Get('/getCouncil')
-    getCouncil() {
-        return this.postsService.getCouncil();
+    getCouncil(@GetUser() user) {
+        return this.postsService.getCouncil(user);
     }
 
     @Get('/getStreet')
-    getStreet() {
-        return this.postsService.getStreet();
+    getStreet(@GetUser() user) {
+        return this.postsService.getStreet(user);
     }
 
     @Post('/like/:id')
