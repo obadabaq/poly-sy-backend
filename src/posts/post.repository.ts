@@ -15,6 +15,8 @@ export class PostRepository extends Repository<Post> {
         post.content = content;
         post.user = user;
         post.area = area;
+        post.userArea = user.area;
+        post.userAreaEn = user.areaEn;
         post.city = city;
         post.numOfDislikes = 0;
         post.numOfLikes = 0;

@@ -70,8 +70,11 @@ export class PostsService {
             .leftJoinAndSelect("Post.user", "user")
             .leftJoinAndSelect("Post.likedByUsers", "likedByUsers")
             .leftJoinAndSelect("Post.dislikedByUsers", "dislikedByUsers")
-            .where("Post.wallType = :wallType AND Post.area ILIKE :area", { wallType: WallType.COUNCIL, area: `%${area}%` });
-
+            .where("Post.wallType = :wallType AND Post.area ILIKE :area", {
+                wallType: WallType.COUNCIL,
+                area: `%${area}%`
+            })
+            .orderBy("Post.numOfLikes", "DESC");
 
         let found = await query.getMany();
 
@@ -93,7 +96,8 @@ export class PostsService {
             .leftJoinAndSelect("Post.user", "user")
             .leftJoinAndSelect("Post.likedByUsers", "likedByUsers")
             .leftJoinAndSelect("Post.dislikedByUsers", "dislikedByUsers")
-            .where("Post.wallType = :wallType AND Post.area ILIKE :area", { wallType: WallType.STREET, area: `%${area}%` });
+            .where("Post.wallType = :wallType AND Post.area ILIKE :area", { wallType: WallType.STREET, area: `%${area}%` })
+            .orderBy("Post.numOfLikes", "DESC");
 
         let found = await query.getMany();
 

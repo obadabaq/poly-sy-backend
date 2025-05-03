@@ -35,6 +35,12 @@ export class Post extends BaseEntity {
     @Column({ nullable: true })
     area: string;
 
+    @Column({ nullable: true })
+    userArea: string;
+
+    @Column({ nullable: true })
+    userAreaEn: string;
+
     @ManyToMany(() => User, user => user.likes, { eager: true, onDelete: "CASCADE" })
     @JoinTable()
     likedByUsers: User[]
