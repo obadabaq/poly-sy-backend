@@ -5,7 +5,12 @@ import { Post } from "src/posts/post.entity";
 import { User } from "src/users/user.entity";
 
 export const typeOrmConfig: TypeOrmModuleOptions = {
-    ssl: false,
+    ssl: true,
+    extra: {
+        ssl: {
+            rejectUnauthorized: false // Required for Koyeb's certificate
+        }
+    },
     type: 'postgres',
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
