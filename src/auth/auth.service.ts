@@ -59,7 +59,7 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
     }
 
     async addUser(createUserDto: CreateUserDto): Promise<any> {
-        const { phone, name, password, role, city, area, idVerification, bio, about } = createUserDto;
+        const { phone, name, password, role, city, area, cityEn, areaEn, idVerification, bio, about } = createUserDto;
 
         const salt = await bcrypt.genSalt();
 
@@ -84,6 +84,8 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
         }
         user.city = city;
         user.area = area;
+        user.cityEn = cityEn;
+        user.areaEn = areaEn;
         // user.lat = lat;
         // user.long = long;
         const accessToken = await this.userToken(phone);
