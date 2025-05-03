@@ -54,6 +54,64 @@ export class UsersService {
         return found;
     }
 
+    async getUserPosts(user: User, userId: number) {
+        let myUserId = user.id;
+
+        let query = this.userRepository.createQueryBuilder('User')
+            .leftJoinAndSelect("User.posts", "posts")
+            .leftJoinAndSelect("posts.likedByUsers", "likedByUsers")
+            .leftJoinAndSelect("posts.dislikedByUsers", "dislikedByUsers")
+            .where("User.id = :userId", { userId });
+        let found = await query.getOne();
+
+        return found?.posts.map(post => {
+            return {
+                ...post,
+                hasLiked: post.likedByUsers?.some(u => u.id === myUserId) || false,
+                hasDisliked: post.dislikedByUsers?.some(u => u.id === myUserId) || false,
+                likedByUsers: undefined,
+                dislikedByUsers: undefined
+            };
+        });
+    }
+
+    async getUserComments(user: User, userId: number) {
+        let myUserId = user.id;
+
+        let query = this.userRepository.createQueryBuilder('User')
+            .leftJoinAndSelect("User.comments", "comments")
+            .leftJoinAndSelect("comments.post", "post")
+            .leftJoinAndSelect("post.user", "user")
+            .leftJoinAndSelect("comments.likedByUsers", "likedByUsers")
+            .leftJoinAndSelect("comments.dislikedByUsers", "dislikedByUsers")
+            .where("User.id = :userId", { userId });
+        let found = await query.getOne();
+
+        return found?.comments.map(comment => {
+            return {
+                ...comment,
+                hasLiked: comment.likedByUsers?.some(u => u.id === myUserId) || false,
+                hasDisliked: comment.dislikedByUsers?.some(u => u.id === myUserId) || false,
+                likedByUsers: undefined,
+                dislikedByUsers: undefined
+            };
+        });
+    }
+
+    async checkUserIsFollowed(user: User, userId: number) {
+        let myUserId = user.id;
+
+        let query = this.userRepository.createQueryBuilder('User')
+            .leftJoinAndSelect("User.followers", "followers")
+            .where("User.id = :userId", { userId });
+        let found = await query.getOne();
+        for (let i = 0; i < found?.followers.length!; i++) {
+            if (found?.followers[i].id == myUserId)
+                return true;
+        }
+        return false;
+    }
+
     async verifyUser(userId: number) {
         let query = this.userRepository.createQueryBuilder('User')
             .where("User.id = :id", { id: userId });

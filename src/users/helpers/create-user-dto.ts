@@ -8,6 +8,8 @@ export class CreateUserDto {
     city: string;
     area: string;
     idVerification: string;
+    bio: string;
+    about: string;
 
     constructor(
         phone: string,

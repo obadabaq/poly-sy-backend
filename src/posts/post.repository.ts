@@ -9,11 +9,13 @@ import { ForbiddenException, InternalServerErrorException } from "@nestjs/common
 export class PostRepository extends Repository<Post> {
 
     async addPost(createPostDto: CreatePostDto, user: User): Promise<Post> {
-        const { content, wallType } = createPostDto;
+        const { content, wallType, city, area } = createPostDto;
 
         const post = new Post();
         post.content = content;
         post.user = user;
+        post.area = area;
+        post.city = city;
         post.numOfDislikes = 0;
         post.numOfLikes = 0;
         if (!Object.values(WallType).includes(wallType)) {

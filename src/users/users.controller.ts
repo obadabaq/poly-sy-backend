@@ -16,6 +16,24 @@ export class UsersController {
     }
 
     @UseGuards(AuthGuard('jwt'))
+    @Get('/:userId/posts')
+    getUserPosts(@GetUser() user, @Param('userId', ParseIntPipe) userId: number) {
+        return this.usersService.getUserPosts(user, userId);
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get('/:userId/comments')
+    getUserComments(@GetUser() user, @Param('userId', ParseIntPipe) userId: number) {
+        return this.usersService.getUserComments(user, userId);
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get('/:userId/check')
+    checkUserIsFollowed(@GetUser() user, @Param('userId', ParseIntPipe) userId: number) {
+        return this.usersService.checkUserIsFollowed(user, userId);
+    }
+
+    @UseGuards(AuthGuard('jwt'))
     @Post('/follow/:userId')
     followUser(@GetUser() user, @Param('userId', ParseIntPipe) userId: number) {
         return this.usersService.followUser(user, userId);
