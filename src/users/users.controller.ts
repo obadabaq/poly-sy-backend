@@ -1,8 +1,9 @@
-import { Controller, Delete, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 import AdminRoleGuard from 'src/helpers/guards/admin.roles.guard';
 import { GetUser } from 'src/helpers/decorators/get-user.decorator';
+import { UpdateLocationDto } from './helpers/update-location-dto';
 
 @UseGuards(AuthGuard('jwt'), AdminRoleGuard())
 @Controller('users')
@@ -31,6 +32,12 @@ export class UsersController {
     @Get('/:userId/check')
     checkUserIsFollowed(@GetUser() user, @Param('userId', ParseIntPipe) userId: number) {
         return this.usersService.checkUserIsFollowed(user, userId);
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Post('/')
+    updateLocation(@GetUser() user, @Body() updateLocationDto: UpdateLocationDto) {
+        return this.usersService.updateLocation(user, updateLocationDto);
     }
 
     @UseGuards(AuthGuard('jwt'))
