@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
 import { User } from './user.entity';
 import { UserRole, UserStatus } from './helpers/create-user-dto';
-import { UpdateLocationDto } from './helpers/update-location-dto';
+import { UpdateUserDto } from './helpers/update-location-dto';
 
 @Injectable()
 export class UsersService {
@@ -56,7 +56,7 @@ export class UsersService {
         return found;
     }
 
-    async updateLocation(user: User, updateLocationDto: UpdateLocationDto) {
+    async updateLocation(user: User, updateLocationDto: UpdateUserDto) {
         let { area, areaEn } = updateLocationDto;
         let query = this.userRepository.createQueryBuilder('User')
             .where("User.id = :id", { id: user.id });

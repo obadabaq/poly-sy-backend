@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 import AdminRoleGuard from 'src/helpers/guards/admin.roles.guard';
 import { GetUser } from 'src/helpers/decorators/get-user.decorator';
-import { UpdateLocationDto } from './helpers/update-location-dto';
+import { UpdateUserDto } from './helpers/update-location-dto';
 
 @UseGuards(AuthGuard('jwt'), AdminRoleGuard())
 @Controller('users')
@@ -35,8 +35,8 @@ export class UsersController {
     }
 
     @UseGuards(AuthGuard('jwt'))
-    @Post('/')
-    updateLocation(@GetUser() user, @Body() updateLocationDto: UpdateLocationDto) {
+    @Post('/update')
+    updateLocation(@GetUser() user, @Body() updateLocationDto: UpdateUserDto) {
         return this.usersService.updateLocation(user, updateLocationDto);
     }
 
