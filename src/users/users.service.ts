@@ -15,7 +15,8 @@ export class UsersService {
         let query = this.userRepository.createQueryBuilder('User')
             .leftJoinAndSelect("User.posts", "posts")
             .leftJoinAndSelect("User.followers", "followers")
-            .leftJoinAndSelect("User.following", "following");
+            .leftJoinAndSelect("User.following", "following")
+            .orderBy("User.numOfFollowers", "DESC");
         let found = await query.getMany();
 
         return found;
