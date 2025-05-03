@@ -8,7 +8,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
     ssl: true,
     extra: {
         ssl: {
-            rejectUnauthorized: false // Required for Koyeb's certificate
+            rejectUnauthorized: false,
         }
     },
     type: 'postgres',

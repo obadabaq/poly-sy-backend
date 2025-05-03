@@ -43,7 +43,7 @@ export class User extends BaseEntity {
     areaEn: string;
 
     @Column({ nullable: true })
-    bio: string;
+    intro: string;
 
     @Column({ nullable: true })
     about: string;

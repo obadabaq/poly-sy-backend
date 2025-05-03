@@ -10,7 +10,7 @@ export class CreateUserDto {
     cityEn: string;
     areaEn: string;
     idVerification: string;
-    bio: string;
+    intro: string;
     about: string;
 
     constructor(
