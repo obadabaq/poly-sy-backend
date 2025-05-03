@@ -24,14 +24,14 @@ export class PostsController {
         return this.postsService.addPost(user, createPostDto);
     }
 
-    @Get('/getCouncil')
-    getCouncil(@GetUser() user) {
-        return this.postsService.getCouncil(user);
+    @Get('/getCouncil/:area')
+    getCouncil(@GetUser() user, @Param('area') area: string) {
+        return this.postsService.getCouncil(user, area);
     }
 
-    @Get('/getStreet')
-    getStreet(@GetUser() user) {
-        return this.postsService.getStreet(user);
+    @Get('/getStreet/:area')
+    getStreet(@GetUser() user, @Param('area') area: string) {
+        return this.postsService.getStreet(user, area);
     }
 
     @Post('/like/:id')

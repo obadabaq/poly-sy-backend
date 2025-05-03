@@ -63,14 +63,15 @@ export class PostsService {
         return await this.postRepository.addPost(createPostDto, user);
     }
 
-    async getCouncil(user: User) {
+    async getCouncil(user: User, area: string) {
         const userId = user.id;
 
         let query = this.postRepository.createQueryBuilder('Post')
             .leftJoinAndSelect("Post.user", "user")
             .leftJoinAndSelect("Post.likedByUsers", "likedByUsers")
             .leftJoinAndSelect("Post.dislikedByUsers", "dislikedByUsers")
-            .where("Post.wallType = :wallType", { wallType: WallType.COUNCIL });
+            .where("Post.wallType = :wallType AND Post.area ILIKE :area", { wallType: WallType.COUNCIL, area: `%${area}%` });
+
 
         let found = await query.getMany();
 
@@ -85,14 +86,14 @@ export class PostsService {
         });
     }
 
-    async getStreet(user: User) {
+    async getStreet(user: User, area: string) {
         const userId = user.id;
 
         let query = this.postRepository.createQueryBuilder('Post')
             .leftJoinAndSelect("Post.user", "user")
             .leftJoinAndSelect("Post.likedByUsers", "likedByUsers")
             .leftJoinAndSelect("Post.dislikedByUsers", "dislikedByUsers")
-            .where("Post.wallType = :wallType", { wallType: WallType.STREET });
+            .where("Post.wallType = :wallType AND Post.area ILIKE :area", { wallType: WallType.STREET, area: `%${area}%` });
 
         let found = await query.getMany();
 
