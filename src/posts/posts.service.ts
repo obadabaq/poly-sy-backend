@@ -33,6 +33,7 @@ export class PostsService {
             .where('post.id = :postId', { postId })
             .addSelect('CASE WHEN likedByUser.id IS NOT NULL THEN true ELSE false END', 'hasLiked')
             .addSelect('CASE WHEN dislikedByUser.id IS NOT NULL THEN true ELSE false END', 'hasDisliked')
+            .orderBy("comments.numOfLikes", "DESC")
             .getRawMany();
 
         return comments.map(comment => ({
