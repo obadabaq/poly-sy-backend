@@ -42,6 +42,8 @@ export class PostsService {
             updatedAt: comment.comments_updatedAt,
             numOfLikes: comment.comments_numOfLikes,
             numOfDislikes: comment.comments_numOfDislikes,
+            userArea: comment.comments_userArea,
+            userAreaEn: comment.comments_userAreaEn,
             hasLiked: comment.hasLiked,
             hasDisliked: comment.hasDisliked,
             user: {

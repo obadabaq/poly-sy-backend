@@ -22,6 +22,12 @@ export class Comment extends BaseEntity {
     @ManyToOne(() => Post, post => post.comments)
     post: Post;
 
+    @Column({ nullable: true })
+    userArea: string;
+
+    @Column({ nullable: true })
+    userAreaEn: string;
+
     @Column()
     numOfLikes: number;
 

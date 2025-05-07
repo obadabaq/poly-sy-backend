@@ -10,7 +10,7 @@ import { PostRepository } from "src/posts/post.repository";
 export class CommentRepository extends Repository<Comment> {
 
     async addComment(createCommentDto: CreateCommentDto, user: User, postRepository: PostRepository): Promise<Comment> {
-        const { content, postId } = createCommentDto;
+        const { content, postId, userArea, userAreaEn } = createCommentDto;
         let post = await postRepository.findOne({ where: { id: postId } });
         if (!post) throw new NotFoundException(`Post with ID ${postId} not found`);
 
@@ -18,6 +18,8 @@ export class CommentRepository extends Repository<Comment> {
         comment.content = content;
         comment.post = post;
         comment.user = user;
+        comment.userArea = userArea;
+        comment.userAreaEn = userAreaEn;
         comment.numOfDislikes = 0;
         comment.numOfLikes = 0;
 
