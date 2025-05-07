@@ -5,6 +5,7 @@ import { CommentRepository } from './comment.repository';
 import { User } from 'src/users/user.entity';
 import { CreateCommentDto } from './helpers/create-comment-dto';
 import { UserStatus } from 'src/users/helpers/create-user-dto';
+import { UserRepository } from 'src/users/user.repository';
 
 @Injectable()
 export class CommentsService {
@@ -12,7 +13,9 @@ export class CommentsService {
         @InjectRepository(CommentRepository)
         private readonly commentRepository: CommentRepository,
         @InjectRepository(PostRepository)
-        private readonly postRepository: PostRepository
+        private readonly postRepository: PostRepository,
+        @InjectRepository(UserRepository)
+        private readonly userRepository: UserRepository
     ) { }
 
     async getComments() {
@@ -49,6 +52,8 @@ export class CommentsService {
                 let index = found.likedByUsers.indexOf(user);
                 found.likedByUsers.splice(index);
                 found.numOfLikes -= 1;
+                found.user.score -= 1;
+                await this.userRepository.save(found.user);
                 await this.commentRepository.save(found);
                 return found;
             }
@@ -60,11 +65,14 @@ export class CommentsService {
                 let index = found.dislikedByUsers.indexOf(user);
                 found.dislikedByUsers.splice(index);
                 found.numOfDislikes -= 1;
+                found.user.score += 1;
             }
         }
         ///add to liked
         found.likedByUsers.push(user);
         found.numOfLikes += 1;
+        found.user.score += 1;
+        await this.userRepository.save(found.user);
         await this.commentRepository.save(found);
         return found
     }
@@ -83,6 +91,8 @@ export class CommentsService {
                 let index = found.dislikedByUsers.indexOf(user);
                 found.dislikedByUsers.splice(index);
                 found.numOfDislikes -= 1;
+                found.user.score += 1;
+                await this.userRepository.save(found.user);
                 await this.commentRepository.save(found);
                 return found
             }
@@ -94,11 +104,14 @@ export class CommentsService {
                 let index = found.likedByUsers.indexOf(user);
                 found.likedByUsers.splice(index);
                 found.numOfLikes -= 1;
+                found.user.score -= 1;
             }
         }
         ///add to disliked
         found.dislikedByUsers.push(user);
         found.numOfDislikes += 1;
+        found.user.score -= 1;
+        await this.userRepository.save(found.user);
         await this.commentRepository.save(found);
         return found
     }

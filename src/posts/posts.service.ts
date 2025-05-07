@@ -4,12 +4,15 @@ import { PostRepository } from './post.repository';
 import { User } from 'src/users/user.entity';
 import { CreatePostDto, WallType } from './helpers/create-post-dto';
 import { UserRole, UserStatus } from 'src/users/helpers/create-user-dto';
+import { UserRepository } from 'src/users/user.repository';
 
 @Injectable()
 export class PostsService {
     constructor(
         @InjectRepository(PostRepository)
-        private readonly postRepository: PostRepository
+        private readonly postRepository: PostRepository,
+        @InjectRepository(UserRepository)
+        private readonly userRepository: UserRepository,
     ) { }
 
     async getPosts() {
@@ -130,6 +133,8 @@ export class PostsService {
                 let index = found.likedByUsers.indexOf(user);
                 found.likedByUsers.splice(index);
                 found.numOfLikes -= 1;
+                found.user.score -= 1;
+                await this.userRepository.save(found.user);
                 await this.postRepository.save(found);
                 return found
             }
@@ -141,11 +146,14 @@ export class PostsService {
                 let index = found.dislikedByUsers.indexOf(user);
                 found.dislikedByUsers.splice(index);
                 found.numOfDislikes -= 1;
+                found.user.score += 1;
             }
         }
         ///add to liked
         found.likedByUsers.push(user);
         found.numOfLikes += 1;
+        found.user.score += 1;
+        await this.userRepository.save(found.user);
         await this.postRepository.save(found);
         return found
     }
@@ -164,6 +172,8 @@ export class PostsService {
                 let index = found.dislikedByUsers.indexOf(user);
                 found.dislikedByUsers.splice(index);
                 found.numOfDislikes -= 1;
+                found.user.score += 1;
+                await this.userRepository.save(found.user);
                 await this.postRepository.save(found);
                 return found
             }
@@ -175,11 +185,14 @@ export class PostsService {
                 let index = found.likedByUsers.indexOf(user);
                 found.likedByUsers.splice(index);
                 found.numOfLikes -= 1;
+                found.user.score -= 1;
             }
         }
         ///add to disliked
         found.dislikedByUsers.push(user);
         found.numOfDislikes += 1;
+        found.user.score -= 1;
+        await this.userRepository.save(found.user);
         await this.postRepository.save(found);
         return found
     }

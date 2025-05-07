@@ -72,6 +72,7 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
         user.salt = salt;
         user.numOfFollowers = 0;
         user.numOfFollowing = 0;
+        user.score = 0;
         if (!Object.values(UserRole).includes(role)) {
             throw new ForbiddenException('User role should be VOTER or REPRESENTATIVE');
         }

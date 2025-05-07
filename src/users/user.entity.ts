@@ -90,6 +90,9 @@ export class User extends BaseEntity {
     @ManyToMany(() => Comment, comment => comment.dislikedByUsers, { onDelete: "CASCADE" })
     commentsDisliked: Comment[];
 
+    @Column({ nullable: true })
+    score: number;
+
     @DeleteDateColumn()
     deletedAt?: Date;
 
