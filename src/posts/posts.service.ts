@@ -69,53 +69,122 @@ export class PostsService {
         return await this.postRepository.addPost(createPostDto, user);
     }
 
-    async getCouncil(user: User, area: string) {
+    async getCouncil(user: User, area: string, level: number) {
         const userId = user.id;
+        let posts: any[];
 
-        let query = this.postRepository.createQueryBuilder('Post')
-            .leftJoinAndSelect("Post.user", "user")
-            .leftJoinAndSelect("Post.likedByUsers", "likedByUsers")
-            .leftJoinAndSelect("Post.dislikedByUsers", "dislikedByUsers")
-            .where("Post.wallType = :wallType AND Post.area ILIKE :area", {
-                wallType: WallType.COUNCIL,
-                area: `%${area}%`
-            })
-            .orderBy("Post.numOfLikes", "DESC");
+        if (level === 3) {
+            posts = await this.postRepository
+                .createQueryBuilder('post')
+                .leftJoinAndSelect('post.user', 'user')
+                .leftJoinAndSelect('post.likedByUsers', 'likedByUsers')
+                .leftJoinAndSelect('post.dislikedByUsers', 'dislikedByUsers')
+                .where('post.wallType = :wallType', { wallType: WallType.COUNCIL })
+                .orderBy('post.numOfLikes', 'DESC')
+                .getMany();
+        }
+        else if (level === 2) {
+            const data = require('../../uploads/maps/areas_boundaries.json');
+            const childAreas: string[] = (data as any[])
+                .filter((entry) => entry.parentEn === area)
+                .map((entry) => entry.nameEn);
 
-        let found = await query.getMany();
+            if (childAreas.length === 0) {
+                throw new NotFoundException(`No areas found under city: ${area}`);
+            }
 
-        return found.map(post => {
-            return {
-                ...post,
-                hasLiked: post.likedByUsers?.some(u => u.id === userId) || false,
-                hasDisliked: post.dislikedByUsers?.some(u => u.id === userId) || false,
-                likedByUsers: undefined,
-                dislikedByUsers: undefined
-            };
-        });
+            posts = await this.postRepository
+                .createQueryBuilder('post')
+                .leftJoinAndSelect('post.user', 'user')
+                .leftJoinAndSelect('post.likedByUsers', 'likedByUsers')
+                .leftJoinAndSelect('post.dislikedByUsers', 'dislikedByUsers')
+                .where('post.wallType = :wallType', { wallType: WallType.COUNCIL })
+                .andWhere('post.area IN (:...areas)', { areas: childAreas })
+                .orderBy('post.numOfLikes', 'DESC')
+                .getMany();
+
+        }
+        else if (level === 1) {
+            posts = await this.postRepository
+                .createQueryBuilder('post')
+                .leftJoinAndSelect('post.user', 'user')
+                .leftJoinAndSelect('post.likedByUsers', 'likedByUsers')
+                .leftJoinAndSelect('post.dislikedByUsers', 'dislikedByUsers')
+                .where('post.wallType = :wallType', { wallType: WallType.COUNCIL })
+                .andWhere('post.area ILIKE :area', { area: `%${area}%` })
+                .orderBy('post.numOfLikes', 'DESC')
+                .getMany();
+        }
+        else {
+            throw new NotFoundException(`Unsupported level: ${level}`);
+        }
+
+        return posts.map((post) => ({
+            ...post,
+            hasLiked: post.likedByUsers?.some((u) => u.id === userId) ?? false,
+            hasDisliked: post.dislikedByUsers?.some((u) => u.id === userId) ?? false,
+            likedByUsers: undefined,
+            dislikedByUsers: undefined,
+        }));
     }
 
-    async getStreet(user: User, area: string) {
+    async getStreet(user: User, area: string, level: number) {
         const userId = user.id;
+        let posts: any[];
 
-        let query = this.postRepository.createQueryBuilder('Post')
-            .leftJoinAndSelect("Post.user", "user")
-            .leftJoinAndSelect("Post.likedByUsers", "likedByUsers")
-            .leftJoinAndSelect("Post.dislikedByUsers", "dislikedByUsers")
-            .where("Post.wallType = :wallType AND Post.area ILIKE :area", { wallType: WallType.STREET, area: `%${area}%` })
-            .orderBy("Post.numOfLikes", "DESC");
+        if (level === 3) {
+            posts = await this.postRepository
+                .createQueryBuilder('post')
+                .leftJoinAndSelect('post.user', 'user')
+                .leftJoinAndSelect('post.likedByUsers', 'likedByUsers')
+                .leftJoinAndSelect('post.dislikedByUsers', 'dislikedByUsers')
+                .where('post.wallType = :wallType', { wallType: WallType.STREET })
+                .orderBy('post.numOfLikes', 'DESC')
+                .getMany();
+        }
+        else if (level === 2) {
+            const data = require('../../uploads/maps/areas_boundaries.json');
+            const childAreas: string[] = (data as any[])
+                .filter((entry) => entry.parentEn === area)
+                .map((entry) => entry.nameEn);
 
-        let found = await query.getMany();
+            if (childAreas.length === 0) {
+                throw new NotFoundException(`No areas found under city: ${area}`);
+            }
 
-        return found.map(post => {
-            return {
-                ...post,
-                hasLiked: post.likedByUsers?.some(u => u.id === userId) || false,
-                hasDisliked: post.dislikedByUsers?.some(u => u.id === userId) || false,
-                likedByUsers: undefined,
-                dislikedByUsers: undefined
-            };
-        });
+            posts = await this.postRepository
+                .createQueryBuilder('post')
+                .leftJoinAndSelect('post.user', 'user')
+                .leftJoinAndSelect('post.likedByUsers', 'likedByUsers')
+                .leftJoinAndSelect('post.dislikedByUsers', 'dislikedByUsers')
+                .where('post.wallType = :wallType', { wallType: WallType.STREET })
+                .andWhere('post.area IN (:...areas)', { areas: childAreas })
+                .orderBy('post.numOfLikes', 'DESC')
+                .getMany();
+
+        }
+        else if (level === 1) {
+            posts = await this.postRepository
+                .createQueryBuilder('post')
+                .leftJoinAndSelect('post.user', 'user')
+                .leftJoinAndSelect('post.likedByUsers', 'likedByUsers')
+                .leftJoinAndSelect('post.dislikedByUsers', 'dislikedByUsers')
+                .where('post.wallType = :wallType', { wallType: WallType.STREET })
+                .andWhere('post.area ILIKE :area', { area: `%${area}%` })
+                .orderBy('post.numOfLikes', 'DESC')
+                .getMany();
+        }
+        else {
+            throw new NotFoundException(`Unsupported level: ${level}`);
+        }
+
+        return posts.map((post) => ({
+            ...post,
+            hasLiked: post.likedByUsers?.some((u) => u.id === userId) ?? false,
+            hasDisliked: post.dislikedByUsers?.some((u) => u.id === userId) ?? false,
+            likedByUsers: undefined,
+            dislikedByUsers: undefined,
+        }));
     }
 
     async likePost(user: User, postId: number) {
