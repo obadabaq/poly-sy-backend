@@ -73,7 +73,7 @@ export class PostsService {
         const userId = user.id;
         let posts: any[];
 
-        if (level === 3) {
+        if (level == 3) {
             posts = await this.postRepository
                 .createQueryBuilder('post')
                 .leftJoinAndSelect('post.user', 'user')
@@ -83,7 +83,7 @@ export class PostsService {
                 .orderBy('post.numOfLikes', 'DESC')
                 .getMany();
         }
-        else if (level === 2) {
+        else if (level == 2) {
             const data = require('../../uploads/maps/areas_boundaries.json');
             const childAreas: string[] = (data as any[])
                 .filter((entry) => entry.parentEn === area)
@@ -104,7 +104,7 @@ export class PostsService {
                 .getMany();
 
         }
-        else if (level === 1) {
+        else if (level == 1) {
             posts = await this.postRepository
                 .createQueryBuilder('post')
                 .leftJoinAndSelect('post.user', 'user')
@@ -132,7 +132,7 @@ export class PostsService {
         const userId = user.id;
         let posts: any[];
 
-        if (level === 3) {
+        if (level == 3) {
             posts = await this.postRepository
                 .createQueryBuilder('post')
                 .leftJoinAndSelect('post.user', 'user')
@@ -142,7 +142,7 @@ export class PostsService {
                 .orderBy('post.numOfLikes', 'DESC')
                 .getMany();
         }
-        else if (level === 2) {
+        else if (level == 2) {
             const data = require('../../uploads/maps/areas_boundaries.json');
             const childAreas: string[] = (data as any[])
                 .filter((entry) => entry.parentEn === area)
@@ -163,7 +163,7 @@ export class PostsService {
                 .getMany();
 
         }
-        else if (level === 1) {
+        else if (level == 1) {
             posts = await this.postRepository
                 .createQueryBuilder('post')
                 .leftJoinAndSelect('post.user', 'user')
