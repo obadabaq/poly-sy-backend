@@ -58,6 +58,7 @@ export class PostsService {
                 area: comment.user_area,
                 numOfFollowers: comment.user_numOfFollowers,
                 numOfFollowing: comment.user_numOfFollowing,
+                image: comment.user_image,
             }
         }));
     }
