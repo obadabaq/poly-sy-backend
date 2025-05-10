@@ -20,6 +20,7 @@ export class CreateUserDto {
         role: UserRole,
         city: string,
         area: string,
+        areaEn: string,
     ) {
         this.phone = phone;
         this.name = name;
@@ -27,6 +28,7 @@ export class CreateUserDto {
         this.role = role;
         this.city = city;
         this.area = area;
+        this.areaEn = areaEn;
     }
 }
 

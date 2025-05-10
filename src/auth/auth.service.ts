@@ -219,7 +219,7 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
 
             const data = require('../../uploads/maps/areas_boundaries.json');
             const areaCity: AreaCity[] = data.map(item =>
-                new AreaCity(item.name, item.parent)
+                new AreaCity(item.name, item.parent, item.nameEn)
             );
 
             const phoneNumbers = this.generateUniquePhoneNumbers(5000);
@@ -233,7 +233,7 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
 
                 for (let i = batchStart; i < batchEnd; i++) {
                     const randomIndex = Math.floor(Math.random() * areaCity.length);
-                    const { city, area } = areaCity[randomIndex];
+                    const { city, area, areaEn } = areaCity[randomIndex];
                     const role = i % 3 === 0 ? UserRole.REPRESENTATIVE : UserRole.VOTER;
 
                     const userDto = new CreateUserDto(
@@ -242,7 +242,8 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
                         `testpass${i}`,
                         role,
                         city,
-                        area
+                        area,
+                        areaEn,
                     );
 
                     this.addUser(userDto);
@@ -277,10 +278,12 @@ export class AuthService extends PassportStrategy(Strategy) implements OnApplica
 
 class AreaCity {
     area: string;
+    areaEn: string;
     city: string;
 
-    constructor(area: string, city: string) {
+    constructor(area: string, city: string, areaEn: string) {
         this.area = area;
         this.city = city;
+        this.areaEn = areaEn;
     }
 }
