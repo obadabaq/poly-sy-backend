@@ -10,6 +10,7 @@ export class CreateUserDto {
     cityEn: string;
     areaEn: string;
     idVerification: string;
+    image: string;
     intro: string;
     about: string;
     defaultArea: string;

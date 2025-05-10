@@ -51,6 +51,9 @@ export class User extends BaseEntity {
     @Column({ nullable: true })
     idVerification: string;
 
+    @Column({ nullable: true })
+    image: string;
+
     @Column({ select: false })
     password: string;
 
