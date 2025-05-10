@@ -93,6 +93,12 @@ export class User extends BaseEntity {
     @Column({ nullable: true })
     score: number;
 
+    @Column({ nullable: true })
+    defaultArea: string;
+
+    @Column({ nullable: true })
+    defaultAreaEn: string;
+
     @DeleteDateColumn()
     deletedAt?: Date;
 

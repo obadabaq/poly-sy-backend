@@ -12,6 +12,8 @@ export class CreateUserDto {
     idVerification: string;
     intro: string;
     about: string;
+    defaultArea: string;
+    defaultAreaEn: string;
 
     constructor(
         phone: string,
